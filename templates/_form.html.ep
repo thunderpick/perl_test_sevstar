@@ -1,0 +1,24 @@
+%= form_for url_for->to_abs => (method => 'POST') => begin
+  <fieldset>
+    <legend><%= $title %></legend>
+    
+    <div class="mb-3 form-floating">
+      %= text_field 'location' => param('location') || $model->{location} || undef, class => 'form-control', id => 'typeName', placeholder => 'Location'
+      %= label_for typeName => 'Location', class => 'col-sm-2 col-form-label'
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        %= t 'button' => (type => 'submit', class => 'btn btn-success col-12') => 'Submit'
+      </div>
+      <div class="col-6">
+        % if (stash('return_to')) {
+          %= link_to 'Cancel' => url_for(stash('return_to'))->query($self->req->params)->to_abs => (type => 'submit', class => 'btn btn-primary col-12')
+        % } else {
+          %= link_to 'Cancel' => url_for->query($self->req->params)->to_abs => (type => 'submit', class => 'btn btn-primary col-12')
+        % }
+        
+      </div>
+    </div>
+  </fieldset>
+% end
