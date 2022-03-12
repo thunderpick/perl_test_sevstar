@@ -30,22 +30,16 @@ app->defaults({
 
 app->log->path(app->config('log'));
 
-# $ENV{MOJO_MODE} = MOJO_MODE_PRODUCTION;
-
-if (app->mode eq MOJO_MODE_DEVELOPMENT) {
-    app->log->on(message => sub ($log, $level, @lines) {
-      say "$level: ", @lines ;
-    });
-}
+app->log->on(message => sub ($log, $level, @lines) {
+  say "$level: ", @lines ;
+}); 
 
 # Database support
 helper pg => sub {
   my $self = shift;
   state $pg = Mojo::Pg->new( $self->app->config('pg') )
-    ->max_connections($self->app->defaults('max_connections'))
+    ->max_connections( $self->app->defaults('max_connections') )
 };
-
-# plugin 'PODViewer';
 
 # Database versioning
 # See migration.sql for details
