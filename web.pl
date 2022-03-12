@@ -17,8 +17,11 @@ my $config = plugin 'Config', file => app->home->child('app.conf');
 
 app->config($config);
 app->secrets($config->{'secrets'});
-app->defaults($config->{'defaults'});
-app->log->path(app->config('log'));
+app->defaults({
+  'entries_per_page' => 5,
+  'pages_per_set'    => 5, 
+});
+# app->log->path(app->config('log'));
 
 # Database support
 helper pg => sub {
