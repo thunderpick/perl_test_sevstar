@@ -28,20 +28,19 @@ app->defaults({
   'max_connections'  => 10
 });
 
-app->log->path(app->config('log'));
-
-app->log->on(message => sub ($log, $level, @lines) {
-  say "$level: ", @lines ;
-});
-app->log->format(sub ($time, $level, @lines) {
-  my $format = sprintf("[%s] [%s] %s\n",
-    $time,
-    $level,
-    c(@lines)->join(" ")
-  );
-  print STDOUT $format;
-  return $format
-});
+app->log(new Mojo::Log(
+  'path'    => app->config('log'),
+  'handle'  => sub { return Mojo::File->new(shift->path)->open('>>') },
+  'message' => sub ($log, $level, @lines) { say "$level: ", @lines },
+  'format'  => sub ($time, $level, @lines) {
+    my $format = sprintf(" [%s] [%s] %s\n",
+      $time,
+      $level,
+      c(@lines)->join(" ")
+    );
+    return $format;
+  }
+));
 
 # Database support
 helper pg => sub {

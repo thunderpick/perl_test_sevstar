@@ -15,7 +15,20 @@ use Cpanel::JSON::XS;
 
 state $config = require '/root/app/app.conf';
 state $pg  = new Mojo::Pg( $config->{'pg'} );
-state $log = new Mojo::Log( path => $config->{'log'} );
+state $log = new Mojo::Log(
+  'path'    => $config->{'log'},
+  'handle'  => sub ($log) { return Mojo::File->new($log->path)->open('>>') },
+  'message' => sub ($log, $level, @lines) { say "$level: ", @lines },
+  'format'  => sub ($time, $level, @lines) {
+    my $format = sprintf(" [%s] [%s] %s\n",
+      $time,
+      $level,
+      c(@lines)->join(" ")
+    );
+
+    return $format;
+  }
+);
 $log->on(message => sub ($log, $level, @lines) {
   say "$level: ", @lines ;
 });
@@ -31,7 +44,7 @@ sub _fetch($hashRow, $index = undef) {
       'content' => '' . $tx->res->body
     };
     
-    $pg->db->update('url' => 
+    $pg->db->update('url' =>
     	$result => {
     		'id' => $hashRow->{id}
   		} => {returning => '*'} =>
