@@ -16,14 +16,8 @@ app->moniker('sevstar perl test');
 my $config = plugin 'Config', file => app->home->child('app.conf');
 
 app->config($config);
-app->secrets([
-  'M3PfEsFOpFwqNMW3Xegw1WraRfxCpWR7',
-  'kxI9ldY7mwe4PbIVWYIStkwAqckjpiHJ'
-]);
-app->defaults({
-  'entries_per_page' => 5,
-  'pages_per_set'    => 5, 
-});
+app->secrets($config->{'secrets'});
+app->defaults($config->{'defaults'});
 app->log->path(app->config('log'));
 
 # Database support
