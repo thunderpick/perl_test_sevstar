@@ -37,12 +37,6 @@ sub _fetch($hashRow, $index = undef) {
 	    	$log->info(sprintf('Location[%d]: %s', $row->{code}, $row->{location}));
 	  	}
 		);
-
-   #  $log->info(
-   #  	dumper(
-   #  		$config->{'pg'}
-  	# 	)
-  	# );
   })
 }
 
