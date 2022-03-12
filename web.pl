@@ -19,13 +19,16 @@ app->config($config);
 app->secrets($config->{'secrets'});
 app->defaults({
   'entries_per_page' => 5,
-  'pages_per_set'    => 5, 
+  'pages_per_set'    => 5,
+  'max_connections'  => 10
 });
 # app->log->path(app->config('log'));
 
 # Database support
 helper pg => sub {
-  state $pg = Mojo::Pg->new( shift->config('pg') )->max_connections(10)
+  my $self = shift;
+  state $pg = Mojo::Pg->new( $self->app->config('pg') )
+    ->max_connections($self->app->defaults('max_connections'))
 };
 
 plugin 'PODViewer';
@@ -68,7 +71,7 @@ get '/' => sub ($c) {
   });
 
   my $rows = $c->app->pg->db->select('url',
-    ['*'],
+    ['*'],  
     $where,
     {
       'order_by' => { -asc => 'id'},

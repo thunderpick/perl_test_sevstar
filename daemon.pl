@@ -9,10 +9,11 @@ use Mojo::IOLoop;
 use Mojo::UserAgent;
 use Mojo::Collection qw(c);
 use Mojo::Util qw(dumper);
+use Mojo::File qw(path);
 
 use Cpanel::JSON::XS;
 
-state $config = require('/root/app/app.conf');
+state $config = path('.')->child('app.conf')->slurp;
 state $pg  = new Mojo::Pg( $config->{'pg'} );
 state $log = new Mojo::Log( path => $config->{'log'} );
 state $ua  = new Mojo::UserAgent();
