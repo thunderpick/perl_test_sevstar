@@ -13,7 +13,7 @@ use Mojo::File qw(path);
 
 use Cpanel::JSON::XS;
 
-state $config = require "" . path('/root/app')->child('app.conf')->to_abs;
+state $config = require '/root/app/app.conf';
 state $pg  = new Mojo::Pg( $config->{'pg'} );
 state $log = new Mojo::Log( path => $config->{'log'} );
 $log->on(message => sub ($log, $level, @lines) {

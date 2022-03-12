@@ -25,6 +25,7 @@ services:
     depends_on:
       - database
     command: bash -c "cpanm --installdeps -n /root/app && perl /root/app/daemon.pl"
+    
   app:
     image: perl
     environment:

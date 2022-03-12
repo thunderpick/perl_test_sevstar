@@ -32,7 +32,16 @@ app->log->path(app->config('log'));
 
 app->log->on(message => sub ($log, $level, @lines) {
   say "$level: ", @lines ;
-}); 
+});
+app->log->format(sub ($time, $level, @lines) {
+  my $format = sprintf("[%s] [%s] %s\n",
+    $time,
+    $level,
+    c(@lines)->join(" ")
+  );
+  print STDOUT $format;
+  return $format
+});
 
 # Database support
 helper pg => sub {
