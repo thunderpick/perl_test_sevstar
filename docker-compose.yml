@@ -13,6 +13,18 @@ services:
       backend:
     restart: always
 
+  daemon:
+    image: perl
+    environment:
+      - POSTGRES_DSN=postgres://sevstar:s3cr3t@database:5432/sevstar
+    volumes:
+      - ${PWD}:/root/app
+    networks:
+      backend:
+    restart: always
+    depends_on:
+      - database
+    command: bash -c "cpanm --installdeps -n /root/app && perl /root/app/daemon.pl"
   app:
     image: perl
     environment:
@@ -30,7 +42,7 @@ services:
     restart: always
     depends_on:
       - database
-    command: bash -c "cpanm --installdeps -n /root/app && morbo -v -w /root/app/app.conf -w /root/app/templates -w /root/app/public /root/app/web.pl -l http://*:80 && perl /root/app/daemon.pl && tail -f /root/app/app.log"
+    command: bash -c "cpanm --installdeps -n /root/app && MOJO_MODE=development morbo -v -w /root/app/app.conf -w /root/app/templates -w /root/app/public /root/app/web.pl -l http://*:80 && tail -f /root/app/app.log"
     # command: bash -c "cpanm --installdeps -n /root/app && perl /root/app/daemon.pl && hypnotoad -f /root/app/web.pl"
 
 networks:

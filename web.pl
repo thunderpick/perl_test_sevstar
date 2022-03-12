@@ -30,9 +30,9 @@ app->defaults({
 
 app->log->path(app->config('log'));
 
-$ENV{MOJO_MODE} = MOJO_MODE_PRODUCTION;
+# $ENV{MOJO_MODE} = MOJO_MODE_PRODUCTION;
 
-if (app->mode eq MOJO_MODE_PRODUCTION) {
+if (app->mode eq MOJO_MODE_DEVELOPMENT) {
     app->log->on(message => sub ($log, $level, @lines) {
       say "$level: ", @lines ;
     });
@@ -45,7 +45,7 @@ helper pg => sub {
     ->max_connections($self->app->defaults('max_connections'))
 };
 
-plugin 'PODViewer';
+# plugin 'PODViewer';
 
 # Database versioning
 # See migration.sql for details

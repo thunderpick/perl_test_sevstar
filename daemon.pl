@@ -16,6 +16,9 @@ use Cpanel::JSON::XS;
 state $config = require "" . path('/root/app')->child('app.conf')->to_abs;
 state $pg  = new Mojo::Pg( $config->{'pg'} );
 state $log = new Mojo::Log( path => $config->{'log'} );
+$log->on(message => sub ($log, $level, @lines) {
+  say "$level: ", @lines ;
+});
 state $ua  = new Mojo::UserAgent();
 
 # $index for compatibility with Mojo::Collection::each
@@ -23,7 +26,7 @@ sub _fetch($hashRow, $index = undef) {
   $log->info(sprintf("Check url: %s", $hashRow->{location}));
   $ua->get($hashRow->{location} => sub ($ua, $tx) {
     my $result = {
-      'code' => $tx->res->code,
+      'code' => $tx->res->code || 0,
       'headers' => encode_json(c(split /\r\n/, $tx->res->headers->to_string)->to_array),
       'content' => '' . $tx->res->body
     };
