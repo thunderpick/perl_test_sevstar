@@ -1,6 +1,7 @@
 FROM perl
 WORKDIR /root/app
 COPY . .
-CMD ["cpanm", "--installdeps", "-n", "."]
 EXPOSE 80
-CMD ["hypnotoad", "-f", "./web.pl"]
+CMD ["cpanm --installdeps -n ."]
+CMD ["hypnotoad -f ./web.pl"]
+# CMD ["tail", "-f", "./app.log"]

@@ -10,25 +10,39 @@ use Mojo::Collection qw(c);
 use Data::Pageset;
 use Cpanel::JSON::XS;
 
+use constant MOJO_MODE_DEVELOPMENT => 'developement';
+use constant MOJO_MODE_PRODUCTION  => 'production';
+
+# BEGIN {};
+
 # Appliction config
 app->moniker('sevstar perl test');
 
 my $config = plugin 'Config', file => app->home->child('app.conf');
 
 app->config($config);
-app->secrets([
-  'M3PfEsFOpFwqNMW3Xegw1WraRfxCpWR7',
-  'kxI9ldY7mwe4PbIVWYIStkwAqckjpiHJ'
-]);
+app->secrets($config->{'secrets'});
 app->defaults({
   'entries_per_page' => 5,
-  'pages_per_set'    => 5, 
+  'pages_per_set'    => 5,
+  'max_connections'  => 10
 });
+
 app->log->path(app->config('log'));
+
+$ENV{MOJO_MODE} = MOJO_MODE_PRODUCTION;
+
+if (app->mode eq MOJO_MODE_PRODUCTION) {
+    app->log->on(message => sub ($log, $level, @lines) {
+      say "$level: ", @lines ;
+    });
+}
 
 # Database support
 helper pg => sub {
-  state $pg = Mojo::Pg->new( shift->config('pg') )->max_connections(10)
+  my $self = shift;
+  state $pg = Mojo::Pg->new( $self->app->config('pg') )
+    ->max_connections($self->app->defaults('max_connections'))
 };
 
 plugin 'PODViewer';
@@ -38,12 +52,18 @@ plugin 'PODViewer';
 app->log->info('Run database migrations');
 
 # If migration file does not exists or something went wrong
-eval { app->pg->migrations->from_file(app->home->child('migration.sql'))->migrate };
+eval { 
+  app->pg->migrations->from_file(
+    app->home->child('migration.sql')
+  )->migrate
+};
 my $e = $@ if defined $@;
-app->log->error('Migrate failed with message "' . $e . '". Near ' . __FILE__ .':'. __LINE__)
+app->log->error('Migrate failed with message "'
+               . $e . '". Near ' . __FILE__ .':'. __LINE__)
   && die $e
   if $e;
 
+# Routes
 get '/' => sub ($c) {
   $c->render_later;
 
@@ -71,7 +91,7 @@ get '/' => sub ($c) {
   });
 
   my $rows = $c->app->pg->db->select('url',
-    ['*'],
+    ['*'],  
     $where,
     {
       'order_by' => { -asc => 'id'},
