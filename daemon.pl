@@ -9,10 +9,11 @@ use Mojo::IOLoop;
 use Mojo::UserAgent;
 use Mojo::Collection qw(c);
 use Mojo::Util qw(dumper);
+use Mojo::File qw(path);
 
 use Cpanel::JSON::XS;
 
-state $config = require('./app.conf');
+state $config = require "" . path('/root/app')->child('app.conf')->to_abs;
 state $pg  = new Mojo::Pg( $config->{'pg'} );
 state $log = new Mojo::Log( path => $config->{'log'} );
 state $ua  = new Mojo::UserAgent();
@@ -37,12 +38,6 @@ sub _fetch($hashRow, $index = undef) {
 	    	$log->info(sprintf('Location[%d]: %s', $row->{code}, $row->{location}));
 	  	}
 		);
-
-   #  $log->info(
-   #  	dumper(
-   #  		$config->{'pg'}
-  	# 	)
-  	# );
   })
 }
 
