@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS public.url (
 	id int primary key GENERATED ALWAYS AS IDENTITY,
 	location varchar(1000) NOT NULL,
 	code integer NOT NULL DEFAULT 0, -- 0   - Mojo::UserAgent hasn't visited the address yet
-									        -- > 0 - address verified
+									 -- > 0 - address verified
 	content text DEFAULT NULL,
 	created_at timestamp with time zone NOT NULL DEFAULT (now() at time zone 'utc'),
 	updated_at timestamp with time zone NOT NULL DEFAULT (now() at time zone 'utc'),
