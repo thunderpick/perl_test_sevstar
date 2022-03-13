@@ -44,6 +44,13 @@ app->log->error('Migrate failed with message "' . $e . '". Near ' . __FILE__ .':
   && die $e
   if $e;
 
+under sub ($c) {
+  return 1 if $c->req->url->to_abs->userinfo && $c->req->url->to_abs->userinfo eq 'sevstar:s3cr3t';
+  $c->res->headers->www_authenticate('Basic');
+  $c->render(text => 'Authentication required!', status => 401);
+  return undef;
+};
+
 get '/' => sub ($c) {
   $c->render_later;
 
