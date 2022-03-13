@@ -13,9 +13,9 @@ use Mojo::File qw(path);
 
 use Cpanel::JSON::XS;
 
-state $config = path('.')->child('app.conf')->slurp;
+state $config = require '/root/app/app.conf';
 state $pg  = new Mojo::Pg( $config->{'pg'} );
-state $log = new Mojo::Log( path => $config->{'log'} );
+state $log = new Mojo::Log( 'path' => $config->{'log'} );
 state $ua  = new Mojo::UserAgent();
 
 # $index for compatibility with Mojo::Collection::each

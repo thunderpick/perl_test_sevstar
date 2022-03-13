@@ -2,7 +2,7 @@
 requires 'perl', '>=5.30.0';
 requires 'Mojolicious', '9.22';
 requires 'File::Spec', '3.78';
-requires 'Mojolicious::Plugin::PODViewer', '0.007';
+
 # Database support
 requires 'Mojo::Pg', '4.26';
 

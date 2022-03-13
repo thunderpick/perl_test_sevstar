@@ -22,7 +22,9 @@ app->defaults({
   'pages_per_set'    => 5,
   'max_connections'  => 10
 });
-# app->log->path(app->config('log'));
+state $log = new Mojo::Log(
+  'path'    => $config->{'log'}
+);
 
 # Database support
 helper pg => sub {
@@ -30,8 +32,6 @@ helper pg => sub {
   state $pg = Mojo::Pg->new( $self->app->config('pg') )
     ->max_connections($self->app->defaults('max_connections'))
 };
-
-plugin 'PODViewer';
 
 # Database versioning
 # See migration.sql for details
