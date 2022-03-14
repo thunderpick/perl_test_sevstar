@@ -1,9 +1,12 @@
 % layout 'default';
 % title 'Url details';
 
+% use Mojo::Util qw(html_unescape);
+% use Mojo::URL;
+
 % if (my $message = flash('info')) {
 %= t 'div' => (class => "alert alert-info alert-dismissible fade show",  role => "alert") => begin
-  %= t 'strong' => $message
+  %= t 'strong' => html_unescape $message
   %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
 % end
 % }
@@ -17,4 +20,5 @@
 
 %= include '_form', model => $result, title => 'Update url', return_to => url_for('url.detail', id => $result->{id})
 
+% $result->{location} = (new Mojo::URL($result->{location}))->userinfo(undef)->to_abs->to_string;
 <pre><%= dumper($result) %></pre>

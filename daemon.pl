@@ -13,6 +13,8 @@ use Mojo::File qw(path);
 
 use Cpanel::JSON::XS;
 
+use constant HTTP_CODE_DEFAULT => 0;
+
 state $config = require '/root/app/app.conf';
 state $pg  = new Mojo::Pg( $config->{'pg'} );
 state $log = new Mojo::Log( 'path' => $config->{'log'} );
@@ -23,7 +25,7 @@ sub _fetch($hashRow, $index = undef) {
   $log->info(sprintf("Check url: %s", $hashRow->{location}));
   $ua->get($hashRow->{location} => sub ($ua, $tx) {
     my $result = {
-      'code' => $tx->res->code,
+      'code' => $tx->res->code || HTTP_CODE_DEFAULT,
       'headers' => encode_json(c(split /\r\n/, $tx->res->headers->to_string)->to_array),
       'content' => '' . $tx->res->body
     };
@@ -42,6 +44,7 @@ sub _fetch($hashRow, $index = undef) {
 }
 
 sub _process ($loop) {
+  $log->info('Start _process...');
 	$pg->db->select('url')->hashes->each(\&_fetch)
 }
 

@@ -22,9 +22,7 @@ app->defaults({
   'pages_per_set'    => 5,
   'max_connections'  => 10
 });
-state $log = new Mojo::Log(
-  'path'    => $config->{'log'}
-);
+state $log = new Mojo::Log( 'path' => $config->{'log'} );
 
 # Database support
 helper pg => sub {
@@ -93,19 +91,31 @@ post '/' => sub ($c) {
   if ($c->param('location') ne '') {
     my $location = b($c->param('location'))->decode;
 
-    if ($c->app->pg->db->select('url', ['*'], {'location' => $location})->rows) {
-      $c->flash(
-        'warn' => sprintf('Url with location "%s" already exists', $location)
-      );
-      $c->redirect_to($c->url_for('url.list'));
-    } else {
-      my $row = $c->app->pg->db->insert('url', {'location' => $location}, {'returning' => 'id'})->hash;
-      $c->app->pg->pubsub->notify('url' => $row->{id});
-      $c->flash(
-        'info' => sprintf('Url with location "%s" added', $location)
-      );
-      $c->redirect_to($c->url_for('url.detail', {id => $row->{id}}));
-    }
+    $c->flash(
+      'warning' => sprintf(
+        'Url with location "%s" already exists'
+        , $location
+      )
+    ) and return $c->redirect_to($c->url_for('url.list'))
+      if $c->app->pg->db->select('url', ['*'], {'location' => $location})->rows;
+
+    my $row = $c->app->pg->db->insert('url', {'location' => $location}, {'returning' => 'id'})->hash;
+    $c->app->pg->pubsub->notify('url' => $row->{id});
+    $c->flash(
+      'info' => sprintf(
+        'Url with location "%s" added' 
+        # . ' <a href="%s">View</a>'
+        , $location
+        # , $c->app->url_for(
+        #   'url.detail',
+        #   {
+        #     id => $row->{id}
+        #   }
+        # )
+      )
+    );
+    $c->redirect_to($c->url_for('url.detail', {id => $row->{id}}));
+
   }
 } => 'url.create';
 
@@ -148,6 +158,6 @@ post '/:id' => sub ($c) {
     $c->app->pg->db->notify(url => $row->{'id'});
     $c->redirect_to('url.detail', { 'id' => $row->{'id'} });
   }
-} => 'url.update'; 
+} => 'url.update';
 
 app->start;

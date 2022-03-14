@@ -11,29 +11,15 @@ services:
     networks:
       backend:
     restart: always
-  daemon:
-    image: perl
-    environment:
-      - POSTGRES_DSN=postgres://sevstar:s3cr3t@database:5432/sevstar
-      - MOJO_IOLOOP_DEBUG=1
-      - MOJO_INSECURE=1
-    volumes:
-      - uploads:/root/app/public/uploads
-      - ${PWD}:/root/app
-    networks:
-      backend:
-    restart: always
-    depends_on:
-      - database
-    command: bash -c "cpanm --installdeps -n /root/app && perl /root/app/daemon.pl && tail -f /root/app/app.log"
   app:
+    build:
+      context: .
     image: perl
     environment:
       - POSTGRES_DSN=postgres://sevstar:s3cr3t@database:5432/sevstar
       - MOJO_IOLOOP_DEBUG=1
       - MOJO_INSECURE=1
     volumes:
-      - uploads:/root/app/public/uploads
       - ${PWD}:/root/app
     ports:
       - "80:80"
@@ -42,7 +28,29 @@ services:
     restart: always
     depends_on:
       - database
-    command: bash -c "cpanm --installdeps -n /root/app && morbo -v -w /root/app/app.conf -w /root/app/templates -w /root/app/public /root/app/web.pl -l http://*:80 && tail -f /root/app/app.log"
+    links:
+      - database
+    command: bash -c "morbo -v -w /root/app/app.conf -w /root/app/templates -w /root/app/public /root/app/web.pl -l http://*:80"
+  daemon:
+    build: 
+      context: .
+    image: perl
+    environment:
+      - POSTGRES_DSN=postgres://sevstar:s3cr3t@database:5432/sevstar
+      - MOJO_IOLOOP_DEBUG=1
+      - MOJO_INSECURE=1
+    volumes:
+      - uploads:/root/app/public/uploads
+      - ${PWD}:/root/app
+    networks:
+      backend:
+    restart: always
+    depends_on:
+      - database
+      - app
+    links:
+      - database
+    command: perl /root/app/daemon.pl
 
 networks:
   backend:

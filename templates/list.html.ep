@@ -1,24 +1,33 @@
 % layout 'default';
 % title 'Welcome';
 
+% use Mojo::Util qw(b64_encode b64_decode);
+
 %# TODO: Turn this shit into helper
 % if (my $info = flash('info')) {
 %= t 'div' => (class => "alert alert-info alert-dismissible fade show",  role => "alert") => begin
-  %= t 'strong' => $info
+  %= t 'strong' => b($info)
   %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
 % end
 % }
 
 % if (my $error = flash('error')) {
 %= t 'div' => (class => "alert alert-error alert-dismissible fade show",  role => "alert") => begin
-  %= t 'strong' => $error
+  %= t 'strong' => b($error)
   %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
 % end
 % }
 
-% if (my $warn = flash('warn')) {
+% if (my $warning = flash('warning')) {
 %= t 'div' => (class => "alert alert-warning alert-dismissible fade show",  role => "alert") => begin
-  %= t 'strong' => $warn
+  %= t 'strong' => b ($warning)
+  %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
+% end
+% }
+
+  % if (my $error = flash('error')) {
+%= t 'div' => (class => "alert alert-error alert-dismissible fade show",  role => "alert") => begin
+  %= t 'strong' => b ($error)
   %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
 % end
 % }
@@ -41,13 +50,24 @@
   <tbody>
     % foreach my $row (@{stash('rows')}) {
       % my $class = (200 == $row->{code} ? 'table-success' : 'table-primary');
-      %# my $class = '';
 
       %= t 'tr' => (class => $class) => begin
         <th scope="row"><%= $row->{id} %></th>
-        <td>
-          %= length $row->{location} > 50 ? substr($row->{location}, 0, 50) . ' ...' : $row->{location}
-        </td>
+        
+        % $row->{location} = (new Mojo::URL($row->{location}))->userinfo(undef)->to_abs->to_string;
+        % $row->{location} = length $row->{location} > 50 ? substr($row->{location}, 0, 50) . ' ...' : $row->{location};
+        <td class="row-<%= $row->{id} %>" data="<%== b64_encode($row->{location}) %>"></td>
+        %= javascript begin
+        (function () {
+          'use strict'
+
+          var c = document.querySelectorAll('.row-<%= $row->{id} %>')
+          Array.prototype.slice.call(c).forEach(function (cell) {
+            var str = atob(cell.getAttribute('data'));
+            cell.innerText = str;
+          }, false)
+        })()
+        % end
         <td><%= $row->{code} || 'N/A' %></td>
         <td><%= $row->{created_at} %></td>
         <td><%= $row->{updated_at} %></td>
@@ -66,50 +86,5 @@
   </tbody>
 </table>
 
-<nav aria-label="Page navigation example">
-  <ul class="pagination justify-content-center">
-    % if(scalar @{$page_info->pages_in_set()} > 1) {
-
-      %# Has previous page
-      % if ($page_info->previous_page) {
-        <li class="page-item">
-          <%= link_to 'First' => url_for('url.list')->query('page' => $page_info->first_page), class => 'page-link' %>
-        </li>
-        <li class="page-item">
-          <%= link_to 'Prev' => url_for('url.list')->query('page' => $page_info->previous_page), class => 'page-link' %>
-        </li>
-      % } else {
-        <li class="page-item disabled"><a class="page-link">First</a></li>
-        <li class="page-item disabled"><a class="page-link">Prev</a></li>
-      % }
-
-      %# Links in set
-      % foreach my $page (@{$page_info->pages_in_set()}) {
-
-        % if ($page == (param('page') || 1)) {
-          <li class="page-item disabled">
-            %= link_to $page => undef, class => 'page-link', href => undef
-          </li>
-        % } else {
-          <li class="page-item">
-            %= link_to $page => url_for('url.list')->query('page' => $page), class => 'page-link'
-          </li>
-        % }
-      % }
-
-      %# Has next page
-      % if ($page_info->next_page) {
-        <li class="page-item">
-          %= link_to 'Next' => url_for('url.list')->query('page' => $page_info->next_page), class => 'page-link'
-        </li>
-        <li class="page-item">
-          %= link_to 'Last' => url_for('url.list')->query('page' => $page_info->last_page), class => 'page-link'
-        </li>
-      % } else {
-        <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
-        <li class="page-item disabled"><a class="page-link" href="#">Last</a></li>
-      % }
-    % }
-  </ul>
-</nav>
+%= include 'pager/_slide', page_info => $page_info
 

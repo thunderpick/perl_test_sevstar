@@ -1,0 +1,46 @@
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    % if(scalar @{$page_info->pages_in_set()} > 1) {
+
+      %# Has previous page
+      % if ($page_info->previous_page) {
+        <li class="page-item">
+          <%= link_to 'First' => url_for('url.list')->query('page' => $page_info->first_page), class => 'page-link' %>
+        </li>
+        <li class="page-item">
+          <%= link_to 'Prev' => url_for('url.list')->query('page' => $page_info->previous_page), class => 'page-link' %>
+        </li>
+      % } else {
+        <li class="page-item disabled"><a class="page-link">First</a></li>
+        <li class="page-item disabled"><a class="page-link">Prev</a></li>
+      % }
+
+      %# Links in set
+      % foreach my $page (@{$page_info->pages_in_set()}) {
+
+        % if ($page == (param('page') || 1)) {
+          <li class="page-item disabled">
+            %= link_to $page => undef, class => 'page-link', href => undef
+          </li>
+        % } else {
+          <li class="page-item">
+            %= link_to $page => url_for('url.list')->query('page' => $page), class => 'page-link'
+          </li>
+        % }
+      % }
+
+      %# Has next page
+      % if ($page_info->next_page) {
+        <li class="page-item">
+          %= link_to 'Next' => url_for('url.list')->query('page' => $page_info->next_page), class => 'page-link'
+        </li>
+        <li class="page-item">
+          %= link_to 'Last' => url_for('url.list')->query('page' => $page_info->last_page), class => 'page-link'
+        </li>
+      % } else {
+        <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+        <li class="page-item disabled"><a class="page-link" href="#">Last</a></li>
+      % }
+    % }
+  </ul>
+</nav>
