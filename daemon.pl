@@ -11,10 +11,9 @@ use Mojo::Collection qw(c);
 use Mojo::Util qw(dumper);
 use Mojo::File qw(path);
 
-use Cpanel::JSON::XS qw(encode_json decode_json);
+use Cpanel::JSON::XS qw(encode_json);
 
 use constant HTTP_CODE_DEFAULT => 0;
-use constant JOB_INTERVAL_SEC => 300;
 
 state $config = require '/root/app/app.conf';
 state $pg  = new Mojo::Pg( $config->{'pg'} );
@@ -57,7 +56,7 @@ $pg->pubsub->listen(url => sub ($pubsub, $payload) {
 });
 
 # Starts immediately
-Mojo::IOLoop->recurring(int(JOB_INTERVAL_SEC) => \&_process);
+Mojo::IOLoop->recurring(int($config->{'job'}->{'interval_sec'}) => \&_process);
 Mojo::IOLoop->next_tick(\&_process);
 
 $log->info('Starting daemon');
