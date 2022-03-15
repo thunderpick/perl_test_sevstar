@@ -11,9 +11,10 @@ use Mojo::Collection qw(c);
 use Mojo::Util qw(dumper);
 use Mojo::File qw(path);
 
-use Cpanel::JSON::XS;
+use Cpanel::JSON::XS qw(encode_json decode_json);
 
 use constant HTTP_CODE_DEFAULT => 0;
+use constant JOB_INTERVAL_SEC => 300;
 
 state $config = require '/root/app/app.conf';
 state $pg  = new Mojo::Pg( $config->{'pg'} );
@@ -30,22 +31,22 @@ sub _fetch($hashRow, $index = undef) {
       'content' => '' . $tx->res->body
     };
     
-    $pg->db->update('url' => 
-    	$result => {
-    		'id' => $hashRow->{id}
-  		} => {returning => '*'} =>
-    	sub ($db, $err, $results)
-	  	{
-	    	my $row = $results->hash;
-	    	$log->info(sprintf('Location[%d]: %s', $row->{code}, $row->{location}));
-	  	}
-		);
+    $pg->db->update('url' =>
+      $result => {
+        'id' => $hashRow->{id}
+      } => {returning => '*'} =>
+      sub ($db, $err, $results)
+      {
+        my $row = $results->hash;
+        $log->info(sprintf('Location[%d]: %s', $row->{code}, $row->{location}));
+      }
+    );
   })
 }
 
 sub _process ($loop) {
   $log->info('Start _process...');
-	$pg->db->select('url')->hashes->each(\&_fetch)
+  $pg->db->select('url')->hashes->each(\&_fetch)
 }
 
 $pg->pubsub->listen(url => sub ($pubsub, $payload) {
@@ -56,7 +57,7 @@ $pg->pubsub->listen(url => sub ($pubsub, $payload) {
 });
 
 # Starts immediately
-Mojo::IOLoop->recurring(5*60 => \&_process);
+Mojo::IOLoop->recurring(int(JOB_INTERVAL_SEC) => \&_process);
 Mojo::IOLoop->next_tick(\&_process);
 
 $log->info('Starting daemon');
