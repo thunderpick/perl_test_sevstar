@@ -10,6 +10,10 @@ use Mojo::Collection qw(c);
 use Data::Pageset;
 use Cpanel::JSON::XS;
 
+# use lib qw(lib);
+# use Application::Plugin::Model;
+# plugin 'Application::Plugin::Model';
+
 # Appliction config
 app->moniker('sevstar perl test');
 
@@ -103,15 +107,7 @@ post '/' => sub ($c) {
     $c->app->pg->pubsub->notify('url' => $row->{id});
     $c->flash(
       'info' => sprintf(
-        'Url with location "%s" added' 
-        # . ' <a href="%s">View</a>'
-        , $location
-        # , $c->app->url_for(
-        #   'url.detail',
-        #   {
-        #     id => $row->{id}
-        #   }
-        # )
+        'Url with location "%s" added'
       )
     );
     $c->redirect_to($c->url_for('url.detail', {id => $row->{id}}));
