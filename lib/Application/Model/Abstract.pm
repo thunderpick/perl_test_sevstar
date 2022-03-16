@@ -1,15 +1,15 @@
 package Application::Model::Abstract {
-	use Mojo::Base 'Mojo::EventEmitter', -signatures;
+use Mojo::Base 'Mojo::EventEmitter', -signatures;
 
-	has '_name';
-	has '_pg';
-	has '_priamry' => 'id';
+  has '_name';
+  has '_pg';
+  has '_priamry' => 'id';
 
-	sub getAdapter { shift->_pg }
-	sub getPrimary { shift->_priamry }
-	sub getTableName { shift->_name }
+  sub getAdapter { shift->_pg }
+  sub getPrimary { shift->_priamry }
+  sub getTableName { shift->_name }
 
-	has '_methods' => sub ($self) {
+  has '_methods' => sub ($self) {
     c(qw(insert select),
       qw(update delete)
     )->each(sub ($method, $index) {
@@ -17,7 +17,7 @@ package Application::Model::Abstract {
         return $table->getAdapter()->db->select($table->getTableName(), @args);
       });
     })->to_array
-	};
+  };
 
   for my $method (qw(insert select update delete)) {
     has $method => sub ($table, @args) {
