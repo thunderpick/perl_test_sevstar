@@ -3,35 +3,6 @@
 
 % use Mojo::Util qw(b64_encode b64_decode);
 
-%# TODO: Turn this shit into helper
-% if (my $info = flash('info')) {
-%= t 'div' => (class => "alert alert-info alert-dismissible fade show",  role => "alert") => begin
-  %= t 'strong' => b($info)
-  %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
-% end
-% }
-
-% if (my $error = flash('error')) {
-%= t 'div' => (class => "alert alert-error alert-dismissible fade show",  role => "alert") => begin
-  %= t 'strong' => b($error)
-  %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
-% end
-% }
-
-% if (my $warning = flash('warning')) {
-%= t 'div' => (class => "alert alert-warning alert-dismissible fade show",  role => "alert") => begin
-  %= t 'strong' => b ($warning)
-  %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
-% end
-% }
-
-  % if (my $error = flash('error')) {
-%= t 'div' => (class => "alert alert-error alert-dismissible fade show",  role => "alert") => begin
-  %= t 'strong' => b ($error)
-  %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
-% end
-% }
-
 %= include '_form', model => {}, title => 'Add new url', return_to => '/'
 
 %# TODO: Wrap table in something similar to GridView in Yii
@@ -49,13 +20,13 @@
   </thead>
   <tbody>
     % foreach my $row (@{stash('rows')}) {
-      % my $class = 'table-default';
+      % my $class = 'table-primary';
       % if($row->{code} >= 500) {
       %   $class = 'table-danger';
       % } elsif($row->{code} >= 400) {
       %   $class = 'table-warning';
       % } elsif($row->{code} >= 300) {
-      %   $class = 'table-primary';
+      %   $class = 'table-secondary';
       % } else {
       %   $class = 'table-success';
       % }

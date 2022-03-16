@@ -29,6 +29,34 @@
     
     <main class="flex-shrink-0">
       <div class="container">
+        %# TODO: Turn this shit into helper
+        % if (my $info = flash('info')) {
+        %= t 'div' => (class => "alert alert-info alert-dismissible fade show",  role => "alert") => begin
+          %= t 'strong' => b($info)
+          %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
+        % end
+        % }
+
+        % if (my $danger = flash('danger')) {
+        %= t 'div' => (class => "alert alert-danger alert-dismissible fade show",  role => "alert") => begin
+          %= t 'strong' => b($danger)
+          %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
+        % end
+        % }
+
+        % if (my $warning = flash('warning')) {
+        %= t 'div' => (class => "alert alert-warning alert-dismissible fade show",  role => "alert") => begin
+          %= t 'strong' => b ($warning)
+          %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
+        % end
+        % }
+
+          % if (my $success = flash('success')) {
+        %= t 'div' => (class => "alert alert-success alert-dismissible fade show",  role => "alert") => begin
+          %= t 'strong' => b ($success)
+          %= t 'button' => (type => 'button', class => 'btn-close', 'data-bs-dismiss' => "alert", 'aria-label' => 'Close')
+        % end
+        % }
         <%= content %>
       </div>
     </main>
