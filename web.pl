@@ -54,6 +54,12 @@ under sub ($c) {
   return undef;
 };
 
+get '/header/200' => sub ($c) { $c->res->code(200); $c->render(text => '200') };
+get '/header/300' => sub ($c) { $c->res->code(300); $c->render(text => '300') };
+get '/header/400' => sub ($c) { $c->res->code(400); $c->render(text => '400') };
+get '/header/500' => sub ($c) { $c->res->code(500); $c->render(text => '500') };
+get '/die' => sub ($c) { die "Some error" };
+
 get '/' => sub ($c) {
   $c->render_later;
 
