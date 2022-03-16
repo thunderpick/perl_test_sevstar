@@ -7,10 +7,8 @@ package Application::Plugin::Model {
   use Mojo::Util qw(camelize decamelize);
 
   sub register ($self, $app, $config) {
-    # my ($self, $app, $config) = @_;
     
     $app->helper(model => sub ($c, $model, %args) {
-      # my ($c, $model, %args) = @_;
 
       # User -> user -> App::Model::User
       # User::Profile -> user-profile -> App::Model::User::Profile
