@@ -148,7 +148,7 @@ post '/:id' => sub ($c) {
       {'returning' => 'id'}
     );
     if (!$result->rows) {
-      $c->flash('error' => "URL was not updated")
+      $c->flash('danger' => "URL was not updated");
     } else {
       $c->flash('info' => "URL was successfully updated");
     }
