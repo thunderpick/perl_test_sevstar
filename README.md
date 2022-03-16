@@ -1,7 +1,7 @@
 # Perl test for backend developer
 
 ## Before install
-Be shure that ```docker``` and ```docker-compose``` packages are installed on your system.
+Be sure that ```docker``` and ```docker-compose``` packages are installed on your system.
 
 Also you may need ```binutils``` and ```git```.
 
