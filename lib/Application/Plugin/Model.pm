@@ -1,39 +1,36 @@
-package Application::Plugin::Model;
-use Mojo::Base 'Mojolicious::Plugin', -signatures;
+package Application::Plugin::Model {
+  use Mojo::Base 'Mojolicious::Plugin', -signatures;
 
-our $VERSION = '0.01';
+  our $VERSION = '0.01';
 
-use Mojo::Loader qw(load_class);
-use Mojo::Util qw(camelize decamelize);
+  use Mojo::Loader qw(load_class);
+  use Mojo::Util qw(camelize decamelize);
 
-sub register {
-  my ($self, $app, $config) = @_;
-  
-  $app->helper(model => sub {
-    my ($c, $model, %args) = @_;
+  sub register {
+    my ($self, $app, $config) = @_;
+    
+    $app->helper(model => sub {
+      my ($c, $model, %args) = @_;
 
-    # User -> user -> App::Model::User
-    # User::Profile -> user-profile -> App::Model::User::Profile
-    # UserProfile -> user_profile -> App::Model::UserProfile
+      # User -> user -> App::Model::User
+      # User::Profile -> user-profile -> App::Model::User::Profile
+      # UserProfile -> user_profile -> App::Model::UserProfile
 
-    if($model eq qr/\:\:/) {
-      $model = camelize(decamelize($model));
-    } else {
       $model = camelize(
         join('-', decamelize(ref $app), "model", lc decamelize($model))
       );
-    }
 
-    my $e = load_class $model;
-    # Can't load a model? Die, because 'load_class' returns an exception
-    die qq{Loading "$model" failed: $e} if ref $e;
+      my $e = load_class $model;
+      # Can't load a model? Die, because 'load_class' returns an exception
+      die qq{Loading "$model" failed: $e} if ref $e;
 
-    # All is OK, return a model instance
-    return $model->new(_pg => $app->pg, %args);
-  });
+      # All is OK, return a model instance
+      return $model->new(_pg => $app->pg, %args);
+    });
+  }
+
+  1;
 }
-
-1;
 
 =encoding utf8
 

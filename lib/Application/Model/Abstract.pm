@@ -30,8 +30,8 @@ package Application::Model::Abstract {
     bless @_ ? @_ > 1 ? {@_} : {%{$_[0]}} : {}, ref $class || $class;
   }
 
-	sub find ($self, @args) { $self->find_by($self->getPrimary, @args)->hash }
-	sub find_by { shift->select(undef, { (shift) => shift }, shift) }
+  sub find ($self, @args) { $self->find_by($self->getPrimary, @args)->hash }
+  sub find_by { shift->select(undef, { (shift) => shift }, shift) }
 
   1;
 }
