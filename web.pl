@@ -66,7 +66,7 @@ get '/' => sub ($c) {
     ],
     $where,
     {
-      'order_by' => { -asc => \'id'},
+      'order_by' => { -asc => \'id' },
       'group_by' => \'id'
     }
   );
