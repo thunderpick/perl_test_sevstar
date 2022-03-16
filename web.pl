@@ -103,11 +103,12 @@ post '/' => sub ($c) {
     ) and return $c->redirect_to($c->url_for('url.list'))
       if $c->app->pg->db->select('url', ['*'], {'location' => $location})->rows;
 
-    my $row = $c->app->pg->db->insert('url', {'location' => $location}, {'returning' => 'id'})->hash;
+    my $row = $c->app->pg->db->insert('url', {'location' => $location}, {'returning' => '*'})->hash;
     $c->app->pg->pubsub->notify('url' => $row->{id});
     $c->flash(
       'info' => sprintf(
-        'Url with location "%s" added'
+        'Url with location "%s" added',
+        $row->{'location'}
       )
     );
     $c->redirect_to($c->url_for('url.detail', {id => $row->{id}}));
