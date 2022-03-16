@@ -17,7 +17,7 @@ services:
     image: perl
     environment:
       - POSTGRES_DSN=postgres://sevstar:s3cr3t@database:5432/sevstar
-      - MOJO_IOLOOP_DEBUG=1
+      # - MOJO_IOLOOP_DEBUG=1
     volumes:
       - ${PWD}:/root/app
     ports:
@@ -36,7 +36,7 @@ services:
     image: perl
     environment:
       - POSTGRES_DSN=postgres://sevstar:s3cr3t@database:5432/sevstar
-      - MOJO_IOLOOP_DEBUG=1
+      # - MOJO_IOLOOP_DEBUG=1
       # - MOJO_CLIENT_DEBUG=1
       - MOJO_INSECURE=1
     volumes:
