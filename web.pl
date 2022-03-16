@@ -21,11 +21,8 @@ my $config = plugin 'Config', file => app->home->child('app.conf');
 
 app->config($config);
 app->secrets($config->{'secrets'});
-app->defaults({
-  'entries_per_page' => 5,
-  'pages_per_set'    => 5,
-  'max_connections'  => 10
-});
+app->defaults($config->{'defaults'});
+
 state $log = new Mojo::Log( 'path' => $config->{'log'} );
 
 # Database support
