@@ -18,6 +18,7 @@ services:
     environment:
       - POSTGRES_DSN=postgres://sevstar:s3cr3t@database:5432/sevstar
       - MOJO_IOLOOP_DEBUG=1
+      # - MOJO_MODE=development
     volumes:
       - ${PWD}:/root/app
     ports:
@@ -29,7 +30,7 @@ services:
       - database
     links:
       - database
-    command: bash -c "morbo -v -m production -w /root/app/app.conf -w /root/app/templates -w /root/app/public /root/app/web.pl -l http://*:80"
+    command: bash -c "morbo -v -w /root/app/app.conf -w /root/app/templates -w /root/app/public /root/app/web.pl -l http://*:80"
   daemon:
     build: 
       context: .
