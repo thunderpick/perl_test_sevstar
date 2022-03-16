@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS public.url (
 	headers jsonb
 );
 
-comment on column url.code is "0 - Mojo::UserAgent hasn't visited the address yet, >0 - address verified";
+comment on column url.code is '0 - Mojo::UserAgent has not visited the address yet, >0 - address verified';
 
 ALTER TABLE public.url OWNER TO sevstar;
 ALTER TABLE ONLY public.url ADD CONSTRAINT url_location_key UNIQUE (location);
