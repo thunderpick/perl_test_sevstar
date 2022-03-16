@@ -10,9 +10,9 @@ use Mojo::Collection qw(c);
 use Data::Pageset;
 use Cpanel::JSON::XS;
 
-# use lib qw(lib);
-# use Application::Plugin::Model;
-# plugin 'Application::Plugin::Model';
+use lib qw(lib);
+use Application::Plugin::Model;
+plugin 'Application::Plugin::Model';
 
 # Appliction config
 app->moniker('sevstar perl test');
@@ -60,7 +60,7 @@ get '/' => sub ($c) {
   my $entries_per_page = $c->app->defaults('entries_per_page');
   my $where = {};
 
-  my $count = $c->app->pg->db->select('url',
+  my $count = $c->model('url')->select(
     [
       \'COUNT(id) AS num'
     ],
@@ -79,7 +79,7 @@ get '/' => sub ($c) {
     'mode'                => 'slide',
   });
 
-  my $rows = $c->app->pg->db->select('url',
+  my $rows = $c->model('url')->select(
     ['*'],  
     $where,
     {
