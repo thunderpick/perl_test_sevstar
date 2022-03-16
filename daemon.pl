@@ -44,8 +44,9 @@ sub _fetch($hashRow, $index = undef) {
 }
 
 sub _process ($loop) {
-  $log->info('Start _process...');
-  $pg->db->select('url')->hashes->each(\&_fetch)
+  my $rows = $pg->db->select('url')->hashes;
+  $log->info(sprintf('Start _process for %d rows...', $rows->size));
+  $rows->each(\&_fetch);
 }
 
 $pg->pubsub->listen(url => sub ($pubsub, $payload) {
