@@ -134,7 +134,7 @@ del '/' => sub ($c) {
   });
 } => 'url.delete';
 
-get '/:id' => sub ($c) {
+get '/:id' => [id => qr/\d+/] => sub ($c) {
   $c->render_later;
 
   $c->app->pg->db->select('url', ['*'], {'id' => $c->param('id')} => sub ($db, $err, $results) {
@@ -146,7 +146,7 @@ get '/:id' => sub ($c) {
   });
 } => 'url.detail';
 
-post '/:id' => sub ($c) {
+post '/:id' => [id => qr/\d+/] => sub ($c) {
   if ($c->app->pg->db->select('url', ['*'], {'id' => $c->param('id')})->rows) {
     my $result = $c->app->pg->db->update('url',
       {'location' => b($c->param('location'))->encode},
