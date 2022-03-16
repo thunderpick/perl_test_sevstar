@@ -49,7 +49,17 @@
   </thead>
   <tbody>
     % foreach my $row (@{stash('rows')}) {
-      % my $class = (200 == $row->{code} ? 'table-success' : 'table-primary');
+      % my $class = (
+      %  200 == $row->{code}
+      %    ? 'table-success'
+      %    : $row->{code} >= 300
+      %      ? 'table-primary'
+      %      : $row->{code} >= 400
+      %        ? 'table-warning'
+      %        : $row->{code} >= 500
+      %          ? 'table-error'
+      %          : 'table-default'
+      % );
 
       %= t 'tr' => (class => $class) => begin
         <th scope="row"><%= $row->{id} %></th>
