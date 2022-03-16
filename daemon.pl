@@ -26,7 +26,7 @@ sub _fetch($hashRow, $index = undef) {
   $ua->get($hashRow->{location} => sub ($ua, $tx) {
     my $result = {
       'code' => $tx->res->code || HTTP_CODE_DEFAULT,
-      'headers' => encode_json(c(split /\r\n/, $tx->res->headers->to_string)->to_array),
+      'headers' => encode_json(c(split /\r\n/, $tx->res->headers->to_string)->head(3)->to_array),
       'content' => '' . $tx->res->body
     };
     
