@@ -3,7 +3,7 @@
 ## Before install
 Be shure that ```docker``` and ```docker-compose``` packages are installed on your system.
 
-Also ```binutils``` and ```git``` may be needed.
+Also you may need ```binutils``` and ```git```.
 
 ## Run code
   1. ```git clone https://github.com/thunderpick/perl_test_sevstar.git app```
