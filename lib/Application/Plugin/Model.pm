@@ -39,20 +39,20 @@ Application::Plugin::Model - Load a model
 =head1 SYNOPSIS
 
   # Mojolicious
-  $self->plugin('PriceMonitor::Plugin::Model');
+  $self->plugin('Application::Plugin::Model');
 
   # Mojolicious::Lite
-  plugin 'PriceMonitor::Plugin::Model';
+  plugin 'Application::Plugin::Model';
 
   # $c->model('url')->select(['fields'] => {where => clause} => sub ($db, $err, $results) {})
 
 =head1 DESCRIPTION
 
-L<PriceMonitor::Plugin::Model> is a L<Mojolicious> plugin.
+L<Application::Plugin::Model> is a L<Mojolicious> plugin.
 
 =head1 METHODS
 
-L<PriceMonitor::Plugin::Model> inherits all methods from
+L<Application::Plugin::Model> inherits all methods from
 L<Mojolicious::Plugin> and implements the following new ones.
 
 =head2 register
