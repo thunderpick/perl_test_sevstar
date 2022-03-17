@@ -43,14 +43,17 @@ app->log->info('Run database migrations');
 # If migration file does not exists or something went wrong
 eval { app->pg->migrations->from_file(app->home->child('migration.sql'))->migrate };
 my $e = $@ if defined $@;
-app->log->error('Migrate failed with message "' . $e . '". Near ' . __FILE__ .':'. __LINE__)
+app->log->error('Migrate failed with message "' . $e . '". Near ' . __FILE__ . ':' . __LINE__)
   && die $e
   if $e;
 
 under sub ($c) {
-  return 1 if $c->req->url->to_abs->userinfo && $c->req->url->to_abs->userinfo eq 'sevstar:s3cr3t';
+  return 1 if $c->req->url->to_abs->userinfo
+    && $c->req->url->to_abs->userinfo eq 'sevstar:s3cr3t';
+
   $c->res->headers->www_authenticate('Basic');
   $c->render(text => 'Authentication required!', status => 401);
+
   return undef;
 };
 
