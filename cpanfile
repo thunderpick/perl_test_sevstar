@@ -13,7 +13,7 @@ requires 'Cpanel::JSON::XS', '4.27';
 requires 'Data::Pageset', '1.06';
 
 # TLS support
-requires 'Net::SSLeay', '1.92';
+requires 'Net::SSLeay', '1.92', '1.88';
 requires 'IO::Socket::SSL', '2.074';
 
 # XML support
