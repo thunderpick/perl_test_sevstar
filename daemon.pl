@@ -17,7 +17,7 @@ use constant HTTP_CODE_DEFAULT => 0;
 
 state $config = require '/root/app/app.conf';
 state $pg  = new Mojo::Pg( $config->{'pg'} );
-state $log = new Mojo::Log( 'path' => $config->{'log'} );
+state $log = new Mojo::Log();
 state $ua  = new Mojo::UserAgent();
 
 # $index for compatibility with Mojo::Collection::each
