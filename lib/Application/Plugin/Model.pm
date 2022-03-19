@@ -43,8 +43,15 @@ Application::Plugin::Model - Load a model
 
   # Mojolicious::Lite
   plugin 'Application::Plugin::Model';
-
-  # $c->model('url')->select(['fields'] => {where => clause} => sub ($db, $err, $results) {})
+  sub ($c) {
+    $c->render_later;
+    $c->model('url')->select(
+      ['fields'] => {where => clause} => sub ($db, $err, $results) {
+        $c->render('list', rows => $results->hashes)
+      }
+    )
+  }
+  
 
 =head1 DESCRIPTION
 
