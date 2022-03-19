@@ -11,15 +11,10 @@ use Cpanel::JSON::XS qw(encode_json);
 
 use lib qw(lib);
 
-use Mojolicious::Plugin::PODViewer;
-use Application::Plugin::Model;
+use Application::Plugin::PODRenderer;
+plugin 'Application::Plugin::PODRenderer';
 
-plugin 'PODViewer' => {
-  'allow_modules' => [
-    'Mojolicious::Guides',
-    'Application::Model::Model',
-  ],
-};
+use Application::Plugin::Model;
 plugin 'Application::Plugin::Model';
 
 # Appliction config
