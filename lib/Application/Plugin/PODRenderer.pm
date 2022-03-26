@@ -6,14 +6,11 @@ use Mojo::ByteStream;
 use Mojo::DOM;
 use Mojo::File 'path';
 use Mojo::URL;
-use Mojo::Util 'deprecated';
 use Pod::Simple::XHTML;
 use Pod::Simple::Search;
 
 sub register {
   my ($self, $app, $conf) = @_;
-
-  deprecated 'Application::Plugin::PODRenderer is DEPRECATED'; 
 
   my $preprocess = $conf->{preprocess} || 'ep';
   $app->renderer->add_handler(
@@ -29,9 +26,9 @@ sub register {
 
   # Perldoc browser
   return undef if $conf->{no_perldoc};
-  my $defaults = {module => 'Application/Plugin/Model'};
+  my $defaults = {module => 'Application/Plugin/Model', format => 'html'};
   return $app->routes->any(
-    '/perldoc/:module' => $defaults => [module => qr/[^.]+/] => \&_perldoc);
+    '/perldoc/:module' => $defaults => [module => qr/[^.]+/, format => [qw(html txt)]] => \&_perldoc);
 }
 
 sub _indentation {
