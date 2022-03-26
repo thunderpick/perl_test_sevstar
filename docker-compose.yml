@@ -30,7 +30,7 @@ services:
       - database
     links:
       - database
-    command: bash -c "morbo -v -w /root/app/app.conf -w /root/app/templates -w /root/app/public /root/app/web.pl -l http://*:80"
+    command: bash -c "morbo -v -w /root/app/lib -w /root/app/app.conf -w /root/app/templates -w /root/app/public /root/app/web.pl -l http://*:80"
   daemon:
     build: 
       context: .
