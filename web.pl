@@ -15,7 +15,10 @@ use Application::Plugin::PODRenderer;
 plugin 'Application::Plugin::PODRenderer';
 
 use Application::Plugin::Model;
-plugin 'Application::Plugin::Model';
+plugin 'Application::Plugin::Model' => {
+  namespace => 'model', # or 'Model' which means 'AppName::Model'
+  helper => 'model',
+};
 
 # Appliction config
 app->moniker('sevstar perl test');
