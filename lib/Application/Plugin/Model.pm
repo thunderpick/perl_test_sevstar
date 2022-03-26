@@ -1,34 +1,38 @@
-package Application::Plugin::Model {
-  use Mojo::Base 'Mojolicious::Plugin', -signatures;
+package Application::Plugin::Model;
+use Mojo::Base 'Mojolicious::Plugin', -signatures;
 
-  our $VERSION = '0.01';
+our $VERSION = '0.01';
 
-  use Mojo::Loader qw(load_class);
-  use Mojo::Util qw(camelize decamelize);
+use Mojo::Loader qw(load_class);
+use Mojo::Util qw(camelize decamelize);
 
-  sub register ($self, $app, $config) {
-    
-    $app->helper(model => sub ($c, $model, %args) {
+sub register ($self, $app, $config) {
 
-      # User -> user -> App::Model::User
-      # User::Profile -> user-profile -> App::Model::User::Profile
-      # UserProfile -> user_profile -> App::Model::UserProfile
+  my $helper = $config->{'helper'};
+  my $namespace = $config->{'namespace'};
 
-      $model = camelize(
-        join('-', decamelize(ref $app), "model", lc decamelize($model))
-      );
+  warn $app->dumper($config);
+  
+  $app->helper($config->{'helper'} => sub ($c, $model, %args) {
 
-      my $e = load_class $model;
-      # Can't load a model? Die, because 'load_class' returns an exception
-      die qq{Loading "$model" failed: $e} if ref $e;
+    # User -> user -> App::Model::User
+    # User::Profile -> user-profile -> App::Model::User::Profile
+    # UserProfile -> user_profile -> App::Model::UserProfile
 
-      # All is OK, return a model instance
-      return $model->new(_pg => $app->pg, %args);
-    });
-  }
+    $model = camelize(
+      join('-', decamelize(ref $app), $config->{'namespace'}, lc decamelize($model))
+    );
 
-  1;
+    my $e = load_class $model;
+    # Can't load a model? Die, because 'load_class' returns an exception
+    die qq{Loading "$model" failed: $e} if ref $e;
+
+    # All is OK, return a model instance
+    return $model->new(_pg => $app->pg, %args);
+  });
 }
+
+1;
 
 =encoding utf8
 
@@ -39,14 +43,27 @@ Application::Plugin::Model - Load a model
 =head1 SYNOPSIS
 
   # Mojolicious
+  use lib qw(lib);
   $self->plugin('Application::Plugin::Model');
 
   # Mojolicious::Lite
-  plugin 'Application::Plugin::Model';
+  use lib qw(lib);
+  plugin 'Application::Plugin::Model' => {
+    'namespace' => 'model', # or 'Model', which means 'AppName::Model'
+    'helper' => 'model',
+  };
+
   sub ($c) {
     $c->render_later;
+
+    # User -> user -> Application::Model::User
+    # User::Profile -> user-profile -> Application::Model::User::Profile
+    # UserProfile -> user_profile -> Application::Model::UserProfile
+
+    # This will generate select sql statement
+    # with SQL::Abstract and exexcute it through Mojo::Pg
     $c->model('url')->select(
-      ['fields'] => {where => clause} => sub ($db, $err, $results) {
+      ['field', 'list'] => {where => clause} => sub ($db, $err, $results) {
         $c->render('list', rows => $results->hashes)
       }
     )
